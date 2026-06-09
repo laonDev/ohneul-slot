@@ -3,9 +3,9 @@ import { defineConfig } from "@apps-in-toss/web-framework/config";
 export default defineConfig({
   appName: "ohneul-slot",
   brand: {
-    displayName: "앱 이름", // 화면에 노출될 앱의 한글 이름으로 바꿔주세요.
-    primaryColor: "#BA68C8", // 화면에 노출될 앱의 기본 색상으로 바꿔주세요.
-    icon: "", // 화면에 노출될 앱의 아이콘 이미지 주소로 바꿔주세요.
+    displayName: "오늘 뭐먹지 슬롯", // 콘솔 등록값과 동일하게 유지하세요.
+    primaryColor: "#FF6B35", // 식욕 도는 오렌지 (앱 테마색)
+    icon: "https://placehold.co/512x512/FF6B35/ffffff?text=🎰", // 콘솔 등록 후 실제 아이콘 URL로 교체
   },
   web: {
     host: "localhost",
