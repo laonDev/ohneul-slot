@@ -1,7 +1,7 @@
 import type { Menu } from '../core/types';
 
 export const MENUS: Menu[] = [
-  // 한식 (korean) — 14개
+  // 한식 (korean)
   { id: 'k01', name: '김치찌개',   emoji: '🍲', category: 'korean' },
   { id: 'k02', name: '된장찌개',   emoji: '🥘', category: 'korean' },
   { id: 'k03', name: '제육볶음',   emoji: '🍖', category: 'korean' },
@@ -19,7 +19,7 @@ export const MENUS: Menu[] = [
   { id: 'k15', name: '설렁탕',     emoji: '🍜', category: 'korean' },
   { id: 'k16', name: '순대국밥',   emoji: '🥘', category: 'korean' },
 
-  // 중식 (chinese) — 10개
+  // 중식 (chinese)
   { id: 'c01', name: '짜장면',     emoji: '🍜', category: 'chinese' },
   { id: 'c02', name: '짬뽕',       emoji: '🌶️', category: 'chinese' },
   { id: 'c03', name: '탕수육',     emoji: '🍤', category: 'chinese' },
@@ -31,7 +31,7 @@ export const MENUS: Menu[] = [
   { id: 'c09', name: '마파두부',   emoji: '🌶️', category: 'chinese' },
   { id: 'c10', name: '딤섬',       emoji: '🥟', category: 'chinese' },
 
-  // 양식 (western) — 12개
+  // 양식 (western)
   { id: 'w01', name: '파스타',     emoji: '🍝', category: 'western' },
   { id: 'w02', name: '피자',       emoji: '🍕', category: 'western' },
   { id: 'w03', name: '햄버거',     emoji: '🍔', category: 'western' },
@@ -45,11 +45,11 @@ export const MENUS: Menu[] = [
   { id: 'w11', name: '시저샐러드', emoji: '🥗', category: 'western' },
   { id: 'w12', name: '크림수프',   emoji: '🍵', category: 'western' },
 
-  // 일식 (japanese) — 12개
+  // 일식 (japanese)
   { id: 'j01', name: '초밥',       emoji: '🍣', category: 'japanese' },
   { id: 'j02', name: '라멘',       emoji: '🍜', category: 'japanese' },
   { id: 'j03', name: '규동',       emoji: '🍱', category: 'japanese' },
-  { id: 'j04', name: '우동',       emoji: '🍲', category: 'japanese' },
+  { id: 'j04', name: '우동',       emoji: '🍜', category: 'japanese' },
   { id: 'j05', name: '돈부리',     emoji: '🍚', category: 'japanese' },
   { id: 'j06', name: '카레',       emoji: '🍛', category: 'japanese' },
   { id: 'j07', name: '텐동',       emoji: '🍤', category: 'japanese' },
@@ -59,19 +59,19 @@ export const MENUS: Menu[] = [
   { id: 'j11', name: '야키토리',   emoji: '🍢', category: 'japanese' },
   { id: 'j12', name: '미소라멘',   emoji: '🍜', category: 'japanese' },
 
-  // 분식 (bunsik) — 10개
+  // 분식 (bunsik)
   { id: 'b01', name: '떡볶이',     emoji: '🍢', category: 'bunsik' },
   { id: 'b02', name: '김밥',       emoji: '🍙', category: 'bunsik' },
   { id: 'b03', name: '라면',       emoji: '🍜', category: 'bunsik' },
   { id: 'b04', name: '순대',       emoji: '🌭', category: 'bunsik' },
   { id: 'b05', name: '튀김',       emoji: '🍤', category: 'bunsik' },
-  { id: 'b06', name: '쫄면',       emoji: '🍝', category: 'bunsik' },
+  { id: 'b06', name: '쫄면',       emoji: '🍜', category: 'bunsik' },
   { id: 'b07', name: '오뎅탕',     emoji: '🍢', category: 'bunsik' },
   { id: 'b08', name: '치즈김밥',   emoji: '🧀', category: 'bunsik' },
   { id: 'b09', name: '잡채밥',     emoji: '🍜', category: 'bunsik' },
   { id: 'b10', name: '컵밥',       emoji: '🍱', category: 'bunsik' },
 
-  // 혼밥 (soloeat) — 10개
+  // 혼밥 (soloeat)
   { id: 's01', name: '편의점도시락', emoji: '🍱', category: 'soloeat' },
   { id: 's02', name: '샌드위치',   emoji: '🥪', category: 'soloeat' },
   { id: 's03', name: '국수',       emoji: '🍜', category: 'soloeat' },
@@ -83,13 +83,13 @@ export const MENUS: Menu[] = [
   { id: 's09', name: '참치마요덮밥', emoji: '🐟', category: 'soloeat' },
   { id: 's10', name: '냉동만두',   emoji: '🥟', category: 'soloeat' },
 
-  // 회식 (meeting) — 10개
+  // 회식 (meeting)
   { id: 'm01', name: '삼겹살',     emoji: '🥓', category: 'meeting' },
   { id: 'm02', name: '치킨',       emoji: '🍗', category: 'meeting' },
   { id: 'm03', name: '곱창',       emoji: '🍖', category: 'meeting' },
-  { id: 'm04', name: '횟집',       emoji: '🐟', category: 'meeting' },
+  { id: 'm04', name: '회덮밥',      emoji: '🍣', category: 'meeting' },
   { id: 'm05', name: '족발',       emoji: '🐷', category: 'meeting' },
-  { id: 'm06', name: '보쌈',       emoji: '🥬', category: 'meeting' },
+  { id: 'm06', name: '보쌈',       emoji: '🥩', category: 'meeting' },
   { id: 'm07', name: '양꼬치',     emoji: '🍢', category: 'meeting' },
   { id: 'm08', name: '소고기구이', emoji: '🥩', category: 'meeting' },
   { id: 'm09', name: '막창',       emoji: '🍖', category: 'meeting' },
