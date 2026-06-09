@@ -21,6 +21,19 @@ describe('menuWeight', () => {
     const w = menuWeight(M('a'), [], new Set(['a']), '2026-06-09');
     expect(w).toBeGreaterThan(1);
   });
+  it('favorite여도 오늘 먹었으면 여전히 억제된다 (recency가 우선)', () => {
+    const h: HistoryEntry[] = [{ date: '2026-06-09', menuId: 'a', category: 'korean' }];
+    const w = menuWeight(M('a'), h, new Set(['a']), '2026-06-09');
+    expect(w).toBeLessThan(0.1); // 0.05 * 1.3 = 0.065
+  });
+  it('같은 메뉴 복수 기록이면 가장 최근(가장 낮은) decay를 적용한다', () => {
+    const h: HistoryEntry[] = [
+      { date: '2026-06-09', menuId: 'a', category: 'korean' }, // d=0
+      { date: '2026-06-06', menuId: 'a', category: 'korean' }, // d=3
+    ];
+    const w = menuWeight(M('a'), h, new Set(), '2026-06-09');
+    expect(w).toBeCloseTo(0.05, 2); // d=0이 지배
+  });
 });
 
 describe('weightedPick', () => {

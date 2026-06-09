@@ -12,6 +12,10 @@ describe('daysSince', () => {
     expect(daysSince('2026-06-08', '2026-06-09')).toBe(1);
     expect(daysSince('2026-06-09', '2026-06-09')).toBe(0);
   });
+  it('handles month boundaries and negative differences', () => {
+    expect(daysSince('2026-05-31', '2026-06-01')).toBe(1);
+    expect(daysSince('2026-06-09', '2026-06-08')).toBe(-1);
+  });
 });
 
 describe('recentMenuIds', () => {
