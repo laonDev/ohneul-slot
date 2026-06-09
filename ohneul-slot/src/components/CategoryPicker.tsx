@@ -9,8 +9,10 @@ export function CategoryPicker({ value, onChange }: Props) {
       {CATEGORIES.map(c => (
         <button
           key={c.id}
+          type="button"
           className={`chip ${value === c.id ? 'chip--on' : ''}`}
           onClick={() => onChange(c.id)}
+          aria-pressed={value === c.id}
         >
           <span>{c.emoji}</span> {c.label}
         </button>
