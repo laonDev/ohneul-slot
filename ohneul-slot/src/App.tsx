@@ -31,6 +31,7 @@ export default function App() {
 
   function spin() {
     const picked = weightedPick(getCandidates(category), history, favSet, today, Math.random);
+    if (!picked) return; // 후보가 비면 스핀하지 않음(현재 데이터에선 발생하지 않지만 방어)
     setResult(picked);
     setSpinning(true);
   }
@@ -79,7 +80,7 @@ export default function App() {
             }
             setResult(null);
           }}
-          onRespin={() => { setResult(null); spin(); }}
+          onRespin={() => spin()}
           onToggleFav={() => toggleFavorite(result.id)}
           shareSlot={<ShareButton menu={result} />}
         />
