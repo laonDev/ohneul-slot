@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { daysSince, recentMenuIds, weekEntries, alreadyEatenToday } from './history-util';
+import { daysSince, weekEntries, alreadyEatenToday } from './history-util';
 import type { HistoryEntry } from './types';
 
 const H: HistoryEntry[] = [
@@ -15,13 +15,6 @@ describe('daysSince', () => {
   it('handles month boundaries and negative differences', () => {
     expect(daysSince('2026-05-31', '2026-06-01')).toBe(1);
     expect(daysSince('2026-06-09', '2026-06-08')).toBe(-1);
-  });
-});
-
-describe('recentMenuIds', () => {
-  it('returns ids eaten within N days of "today"', () => {
-    expect(recentMenuIds(H, '2026-06-09', 1)).toEqual(['k04', 'c01']);
-    expect(recentMenuIds(H, '2026-06-09', 0)).toEqual(['c01']);
   });
 });
 

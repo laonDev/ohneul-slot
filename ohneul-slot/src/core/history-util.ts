@@ -11,13 +11,6 @@ export function daysSince(from: string, to: string): number {
   return Math.round((toUTC(to) - toUTC(from)) / MS_PER_DAY);
 }
 
-/** today 기준 N일 이내(0 = 오늘만)에 먹은 메뉴 id 목록 */
-export function recentMenuIds(history: HistoryEntry[], today: string, days: number): string[] {
-  return history
-    .filter(e => { const d = daysSince(e.date, today); return d >= 0 && d <= days; })
-    .map(e => e.menuId);
-}
-
 /** 월요일 시작 주의 시작 날짜(ms) */
 function mondayOf(date: string): number {
   const t = toUTC(date);

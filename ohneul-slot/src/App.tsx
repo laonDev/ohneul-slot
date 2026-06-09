@@ -54,6 +54,9 @@ export default function App() {
       <header className="app-header">
         <h1>오늘 뭐먹지 슬롯</h1>
         <div className="header-actions">
+          <button type="button" onClick={() => updateSettings({ soundEnabled: !settings.soundEnabled })} aria-pressed={settings.soundEnabled} aria-label="소리">
+            {settings.soundEnabled ? '🔊' : '🔇'}
+          </button>
           <button type="button" onClick={togglePush} aria-pressed={settings.pushEnabled} aria-label="점심 알림">
             {settings.pushEnabled ? '🔔' : '🔕'}
           </button>
@@ -68,7 +71,7 @@ export default function App() {
         </>
       )}
 
-      <SlotMachine result={result} spinning={spinning} onSpinEnd={() => setSpinning(false)} />
+      <SlotMachine result={result} spinning={spinning} soundEnabled={settings.soundEnabled} onSpinEnd={() => setSpinning(false)} />
 
       {result && !spinning && (
         <ResultCard

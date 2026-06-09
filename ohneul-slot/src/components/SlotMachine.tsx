@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Menu } from '../core/types';
 import { playHaptic } from '../platform/haptic';
+import { playSound } from '../platform/sound';
 
 const STRIP_EMOJIS = ['🍚','🍜','🍕','🍣','🍔','🍱','🍢','🥘','🍗','🍙'];
 const ROW_H = 64;     // px
 const REEL_STOP_MS = [700, 1000, 1300];
 const BASE_SPINS = [40, 46, 52];
 
-interface Props { result: Menu | null; spinning: boolean; onSpinEnd: () => void; }
+interface Props { result: Menu | null; spinning: boolean; onSpinEnd: () => void; soundEnabled?: boolean; }
 
-export function SlotMachine({ result, spinning, onSpinEnd }: Props) {
+export function SlotMachine({ result, spinning, onSpinEnd, soundEnabled = true }: Props) {
   const [offsets, setOffsets] = useState([0, 0, 0]);
   const [animating, setAnimating] = useState(false);
   // 부모가 onSpinEnd를 메모이즈하지 않아도 effect가 재실행/리셋되지 않도록 ref로 고정
@@ -31,8 +32,10 @@ export function SlotMachine({ result, spinning, onSpinEnd }: Props) {
     const timers = REEL_STOP_MS.map((ms, i) =>
       setTimeout(() => {
         playHaptic('tick');
+        if (soundEnabled) playSound('tick');
         if (i === 2) {
           playHaptic('success');
+          if (soundEnabled) playSound('win');
           onSpinEndRef.current();
         }
       }, ms),
@@ -40,7 +43,7 @@ export function SlotMachine({ result, spinning, onSpinEnd }: Props) {
     return () => { cancelAnimationFrame(raf); timers.forEach(clearTimeout); };
     // onSpinEnd는 ref로 처리하므로 deps에서 제외
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spinning, result]);
+  }, [spinning, result, soundEnabled]);
 
   return (
     <div className="slot">
