@@ -10,10 +10,17 @@ export async function shareResult(menu: Menu): Promise<void> {
   try {
     await share({ message });
   } catch {
-    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
-      await navigator.share({ text: message }); // 웹 폴백
-    } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
-      await navigator.clipboard.writeText(message); // 최종 폴백
+    try {
+      if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+        await navigator.share({ text: message }); // 웹 폴백
+      } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(message); // 최종 폴백
+      }
+    } catch (e) {
+      // 사용자가 공유를 취소(AbortError)한 경우는 정상 — 무시. 그 외만 경고.
+      if (import.meta.env?.DEV && !(e instanceof Error && e.name === 'AbortError')) {
+        console.warn('[share] fallback failed', e);
+      }
     }
   }
 }
