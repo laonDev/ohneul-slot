@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Menu } from '../core/types';
+import { MenuIcon } from './MenuIcon';
 
 interface Props {
   menu: Menu;
@@ -13,7 +14,7 @@ interface Props {
 export function ResultCard({ menu, isFavorite, onEat, onRespin, onToggleFav, shareSlot }: Props) {
   return (
     <div className="result-card">
-      <div className="result-emoji">{menu.emoji}</div>
+      <div className="result-emoji"><MenuIcon menu={menu} size={72} /></div>
       <div className="result-name">오늘은 <b>{menu.name}</b>!</div>
       <div className="result-actions">
         <button type="button" onClick={onEat}>먹었어요 기록</button>

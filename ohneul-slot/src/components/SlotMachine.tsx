@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import type { Menu } from '../core/types';
 import { playHaptic } from '../platform/haptic';
 import { playSound } from '../platform/sound';
+import { MenuIcon } from './MenuIcon';
 
 const STRIP_EMOJIS = ['🍚','🍜','🍕','🍣','🍔','🍱','🍢','🥘','🍗','🍙'];
 
@@ -168,7 +169,7 @@ export function SlotMachine({ reels, winnerIndex, spinning, onSpinEnd, soundEnab
             <div className="reel-strip" ref={el => { stripRefs.current[i] = el; }}>
               {Array.from({ length: STRIP_LEN }, (_, r) => (
                 <div className="reel-cell" key={r} style={{ height: ROW_H }}>
-                  {r === WIN_INDEX && menu ? menu.emoji : STRIP_EMOJIS[(r + i * 3) % STRIP_EMOJIS.length]}
+                  {r === WIN_INDEX && menu ? <MenuIcon menu={menu} size={44} /> : STRIP_EMOJIS[(r + i * 3) % STRIP_EMOJIS.length]}
                 </div>
               ))}
             </div>
@@ -190,7 +191,7 @@ export function SlotMachine({ reels, winnerIndex, spinning, onSpinEnd, soundEnab
             transform: `translate(-50%, -50%) translateX(${(winnerIndex - 1) * (REEL_W + REEL_GAP)}px)`,
           }}
         >
-          <span className="slot-winner-emoji">{reels[winnerIndex].emoji}</span>
+          <span className="slot-winner-emoji"><MenuIcon menu={reels[winnerIndex]} size={56} /></span>
         </div>
       )}
     </div>
