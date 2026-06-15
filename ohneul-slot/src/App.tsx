@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useAppState } from './store/useAppState';
 import { getCandidates } from './core/menu';
-import { weightedPick } from './core/picker';
+import { pickThree } from './core/picker';
 import { alreadyEatenToday } from './core/history-util';
 import { CategoryPicker } from './components/CategoryPicker';
 import { SlotMachine } from './components/SlotMachine';
@@ -18,6 +18,8 @@ export default function App() {
   const [category, setCategory] = useState<CategoryId>('all');
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState<Menu | null>(null);
+  const [reels, setReels] = useState<Menu[]>([]);
+  const [winnerIndex, setWinnerIndex] = useState(0);
   const [showHistory, setShowHistory] = useState(false);
   const today = todayStr();
   const favSet = useMemo(() => new Set(favorites), [favorites]);
@@ -30,9 +32,11 @@ export default function App() {
   }, [loaded]);
 
   function spin() {
-    const picked = weightedPick(getCandidates(category), history, favSet, today, Math.random);
+    const picked = pickThree(getCandidates(category), history, favSet, today, Math.random);
     if (!picked) return; // 후보가 비면 스핀하지 않음(현재 데이터에선 발생하지 않지만 방어)
-    setResult(picked);
+    setReels(picked.reels);
+    setWinnerIndex(picked.winnerIndex);
+    setResult(picked.reels[picked.winnerIndex]);
     setSpinning(true);
   }
 
@@ -71,7 +75,7 @@ export default function App() {
         </>
       )}
 
-      <SlotMachine result={result} spinning={spinning} soundEnabled={settings.soundEnabled} onSpinEnd={() => setSpinning(false)} />
+      <SlotMachine reels={reels} winnerIndex={winnerIndex} spinning={spinning} soundEnabled={settings.soundEnabled} onSpinEnd={() => setSpinning(false)} />
 
       {result && !spinning && (
         <ResultCard
@@ -82,6 +86,7 @@ export default function App() {
               addHistory({ date: today, menuId: result.id, category: result.category });
             }
             setResult(null);
+            setReels([]); // 슬롯 idle로
           }}
           onRespin={() => spin()}
           onToggleFav={() => toggleFavorite(result.id)}

@@ -8,7 +8,7 @@ export default defineConfig({
     icon: "https://placehold.co/512x512/FF6B35/ffffff?text=🎰", // 콘솔 등록 후 실제 아이콘 URL로 교체
   },
   web: {
-    host: "localhost",
+    host: "192.168.219.105", // 실기기 테스트용 맥 LAN IP (IP 바뀌면 갱신). 빌드/출시엔 영향 없음
     port: 5173,
     commands: {
       dev: "vite dev --host", // --host: 실기기(아이폰)에서 LAN IP로 접속 가능하도록 0.0.0.0 바인딩

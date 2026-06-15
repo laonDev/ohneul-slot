@@ -39,3 +39,34 @@ export function weightedPick(
   }
   return candidates[candidates.length - 1];
 }
+
+export interface ThreePick {
+  reels: Menu[];      // 릴에 표시될 메뉴들(당첨 1 + 미끼들), 위치 섞임
+  winnerIndex: number; // reels 중 실제 당첨(셀렉터가 안착할 위치)
+}
+
+/**
+ * 3릴 후보: 가중 추첨으로 '당첨' 1개를 뽑고, 같은 후보 풀에서 서로 다른 미끼 2개를 균등 추첨해
+ * 섞은 뒤(위치 랜덤) winnerIndex와 함께 반환한다. 후보가 3개 미만이면 가능한 만큼만 채운다.
+ */
+export function pickThree(
+  candidates: Menu[], history: HistoryEntry[], favorites: Set<string>, today: string, rng: Rng,
+): ThreePick | null {
+  const winner = weightedPick(candidates, history, favorites, today, rng);
+  if (!winner) return null;
+
+  const available = candidates.filter(m => m.id !== winner.id);
+  const decoys: Menu[] = [];
+  while (decoys.length < 2 && available.length > 0) {
+    const idx = Math.floor(rng() * available.length);
+    decoys.push(available.splice(idx, 1)[0]);
+  }
+
+  const reels = [winner, ...decoys];
+  // Fisher-Yates 셔플 (위치 랜덤화)
+  for (let i = reels.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    const tmp = reels[i]; reels[i] = reels[j]; reels[j] = tmp;
+  }
+  return { reels, winnerIndex: reels.findIndex(m => m.id === winner.id) };
+}

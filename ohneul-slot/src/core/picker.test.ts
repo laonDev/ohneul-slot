@@ -1,9 +1,30 @@
 import { describe, it, expect } from 'vitest';
-import { menuWeight, weightedPick } from './picker';
+import { menuWeight, weightedPick, pickThree } from './picker';
 import type { Menu, HistoryEntry } from './types';
 
 const M = (id: string): Menu => ({ id, name: id, emoji: '🍚', category: 'korean' });
 const candidates = [M('a'), M('b'), M('c')];
+
+describe('pickThree', () => {
+  const pool = ['a', 'b', 'c', 'd', 'e'].map(M);
+  it('returns 3 distinct menus with a valid winnerIndex', () => {
+    const r = pickThree(pool, [], new Set(), '2026-06-09', () => 0.5);
+    expect(r).not.toBeNull();
+    expect(r!.reels.length).toBe(3);
+    expect(new Set(r!.reels.map(m => m.id)).size).toBe(3); // 서로 다른 후보
+    expect(r!.winnerIndex).toBeGreaterThanOrEqual(0);
+    expect(r!.winnerIndex).toBeLessThan(3);
+  });
+  it('winner sits exactly at winnerIndex', () => {
+    const r = pickThree(pool, [], new Set(), '2026-06-09', () => 0.3)!;
+    // 같은 rng로 weightedPick이 고른 당첨이 winnerIndex 자리에 있어야 함
+    const winner = weightedPick(pool, [], new Set(), '2026-06-09', () => 0.3)!;
+    expect(r.reels[r.winnerIndex].id).toBe(winner.id);
+  });
+  it('returns null for empty candidates', () => {
+    expect(pickThree([], [], new Set(), '2026-06-09', () => 0.5)).toBeNull();
+  });
+});
 
 describe('menuWeight', () => {
   it('is 1 when never eaten and not favorite', () => {
