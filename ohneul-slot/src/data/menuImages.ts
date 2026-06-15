@@ -11,7 +11,7 @@
 //    light background, no text, friendly minimal style, vibrant appetizing colors"
 
 export const MENU_IMAGE_IDS = new Set<string>([
-  // 아직 없음 — 준비되는 대로 id 추가 (예: 'k01', 'k04', 'b01' ...)
+  // 아직 없음 — 준비되는 대로 id 추가
 ]);
 
 export function menuImageUrl(id: string): string | null {

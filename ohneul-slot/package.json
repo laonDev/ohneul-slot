@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "gen:images": "node scripts/gen-menu-images.mjs"
   },
   "dependencies": {
     "@apps-in-toss/web-framework": "^2.6.1",
