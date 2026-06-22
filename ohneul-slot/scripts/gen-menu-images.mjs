@@ -34,9 +34,14 @@ const ROOT = join(__dirname, '..');
 const MENUS_TS = join(ROOT, 'src/data/menus.ts');
 const MANIFEST_TS = join(ROOT, 'src/data/menuImages.ts');
 const OUT_DIR = join(ROOT, 'public/menu');
+const DESC_FILE = join(__dirname, 'menu-prompts.json'); // id → 영어 시각 묘사(있으면 사용)
+
+let DESCRIPTIONS = {};
+try { DESCRIPTIONS = JSON.parse(readFileSync(DESC_FILE, 'utf8')); } catch { /* 없으면 메뉴명만 사용 */ }
 
 const API_URL = 'https://external.api.recraft.ai/v1/images/generations';
-const COST_PER_IMAGE = 0.04; // USD, Recraft V3 raster 기준(참고용)
+const RMBG_URL = 'https://external.api.recraft.ai/v1/images/removeBackground';
+const COST_PER_IMAGE = 0.05; // USD, 생성+배경제거 합산 참고용
 
 // ── 인자 파싱 ───────────────────────────────────────────────
 const args = process.argv.slice(2);
@@ -56,6 +61,7 @@ const SUBSTYLE = process.env.RECRAFT_SUBSTYLE || '';
 const STYLE_ID = process.env.RECRAFT_STYLE_ID || '';
 const SIZE = process.env.RECRAFT_SIZE || '1024x1024';
 const TOKEN = process.env.RECRAFT_API_TOKEN || '';
+const TRANSPARENT = (process.env.RECRAFT_TRANSPARENT || '1') !== '0'; // 기본: 배경 제거(투명)
 
 const CATEGORY_LABEL = {
   korean: 'Korean', chinese: 'Chinese', western: 'Western', japanese: 'Japanese',
@@ -74,7 +80,10 @@ function parseMenus() {
 
 function promptFor(menu) {
   const label = CATEGORY_LABEL[menu.category] || 'food';
-  return `A flat vector illustration icon of "${menu.name}", a ${label} dish, centered, top-down view, on a plain soft pastel background, minimal clean modern style, soft shadow, no text, bright appetizing colors`;
+  const desc = DESCRIPTIONS[menu.id];
+  // 묘사가 있으면 그것을 주제로(식별 가능), 없으면 메뉴명만
+  const subject = desc ? desc : `"${menu.name}", a ${label} dish`;
+  return `A detailed appetizing food illustration of ${subject}, the dish served in its own bowl or plate with only its natural garnish and utensils (e.g. chopsticks), semi-realistic style with glossy soft shading and a subtle drop shadow beneath, viewed from a slight overhead three-quarter angle, the food and its dish fully isolated on a plain pure white background with absolutely no table, scenery, or extra props, centered, no text, rich realistic food colors, recognizable authentic ingredients true to the real dish`;
 }
 
 // ── 매니페스트 동기화 ────────────────────────────────────────
@@ -106,10 +115,23 @@ async function generateOne(menu, sharp) {
       const json = await res.json();
       const url = json?.data?.[0]?.url;
       if (!url) throw new Error('응답에 이미지 URL 없음');
-      const img = await fetch(url);
-      const buf = Buffer.from(await img.arrayBuffer());
-      await sharp(buf).resize(256, 256, { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 } })
-        .webp({ quality: 82 }).toFile(join(OUT_DIR, `${menu.id}.webp`));
+      let buf = Buffer.from(await (await fetch(url)).arrayBuffer());
+
+      // 배경 제거(투명) — 음식 속 흰 요소(밥/계란)는 보존하고 배경만 제거
+      if (TRANSPARENT) {
+        const fd = new FormData();
+        fd.append('file', new Blob([buf], { type: 'image/png' }), 'in.png');
+        fd.append('response_format', 'url');
+        const rb = await fetch(RMBG_URL, { method: 'POST', headers: { Authorization: `Bearer ${TOKEN}` }, body: fd });
+        if (!rb.ok) throw new Error(`removeBackground HTTP ${rb.status} ${(await rb.text()).slice(0, 200)}`);
+        const rbJson = await rb.json();
+        const finalUrl = rbJson?.image?.url || rbJson?.data?.[0]?.url || rbJson?.url;
+        if (!finalUrl) throw new Error('removeBackground 응답 URL 없음: ' + JSON.stringify(rbJson).slice(0, 150));
+        buf = Buffer.from(await (await fetch(finalUrl)).arrayBuffer());
+      }
+
+      await sharp(buf).resize(256, 256, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+        .webp({ quality: 82, alphaQuality: 90 }).toFile(join(OUT_DIR, `${menu.id}.webp`));
       return true;
     } catch (e) {
       lastErr = e;
