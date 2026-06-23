@@ -35,7 +35,14 @@ export function menuImageUrl(id: string): string | null {
 
 // 카테고리 제너릭 아이콘(롱테일 폴백). 준비되면 public/menu/_cat-<category>.webp 추가 후 등록.
 export const CATEGORY_IMAGE_CATS = new Set<string>([
-  // 예: 'korean', 'chinese', ... (아직 없음 — 준비되면 추가)
+  'bunsik',
+  'chinese',
+  'default',
+  'japanese',
+  'korean',
+  'meeting',
+  'soloeat',
+  'western',
 ]);
 
 export function categoryImageUrl(category: string): string | null {
@@ -51,12 +58,12 @@ export function categoryImageUrl(category: string): string | null {
  *  4) 없음(null) → 호출부에서 이모지 폴백
  */
 export function resolveMenuIconUrl(menu: Menu): string | null {
+  // 1) 이 메뉴 전용 이미지
   const direct = menuImageUrl(menu.id);
   if (direct) return direct;
+  // 2) 이름 정규화로 표준 메뉴 매칭 → 아는 메뉴면 그 이미지(있을 때만). 없으면 null → 구체적 이모지 사용.
   const canon = findCanonicalMenu(menu.name);
-  if (canon) {
-    const viaCanon = menuImageUrl(canon.id);
-    if (viaCanon) return viaCanon;
-  }
-  return categoryImageUrl(menu.category);
+  if (canon) return menuImageUrl(canon.id);
+  // 3) 못 알아본 메뉴만 카테고리 제너릭(없으면 default), 그래도 없으면 null → 이모지
+  return categoryImageUrl(menu.category) ?? categoryImageUrl('default');
 }
