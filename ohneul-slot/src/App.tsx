@@ -41,6 +41,7 @@ export default function App() {
   const canSpin = activeSet ? canSpinSet(activeSet) : candidates.length > 0;
 
   function spin() {
+    if (!canSpin) return; // 버튼 disable과 이중 방어(예: 항목 부족 셋)
     const picked = pickThree(candidates, history, favSet, today, Math.random);
     if (!picked) return;
     setReels(picked.reels);
