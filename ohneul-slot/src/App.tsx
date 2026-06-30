@@ -8,7 +8,6 @@ import { SlotMachine } from './components/SlotMachine';
 import { ResultCard } from './components/ResultCard';
 import { ShareButton } from './components/ShareButton';
 import { HistoryView } from './components/HistoryView';
-import { enableLunchPush } from './platform/notify';
 import type { CategoryId, Menu } from './core/types';
 
 function todayStr(): string { return new Date().toISOString().slice(0, 10); } // UTC YYYY-MM-DD (HistoryView와 정합)
@@ -45,11 +44,8 @@ export default function App() {
     updateSettings({ lastCategory: c });
   }
 
-  async function togglePush() {
-    if (settings.pushEnabled) { updateSettings({ pushEnabled: false }); return; }
-    const ok = await enableLunchPush();
-    updateSettings({ pushEnabled: ok });
-  }
+  // 점심 알림은 콘솔 광고성(재방문/신규유입) 캠페인으로 처리 → 인앱 🔔 토글 임시 숨김.
+  // 추후 기능성(매일 11:30 고정) 정식 구현 시 notify.ts의 enableLunchPush로 복구.
 
   if (!loaded) return <div className="loading">불러오는 중…</div>;
 
@@ -60,9 +56,6 @@ export default function App() {
         <div className="header-actions">
           <button type="button" onClick={() => updateSettings({ soundEnabled: !settings.soundEnabled })} aria-pressed={settings.soundEnabled} aria-label="소리">
             {settings.soundEnabled ? '🔊' : '🔇'}
-          </button>
-          <button type="button" onClick={togglePush} aria-pressed={settings.pushEnabled} aria-label="점심 알림">
-            {settings.pushEnabled ? '🔔' : '🔕'}
           </button>
           <button type="button" onClick={() => setShowHistory(true)} aria-label="이번 주 기록">📅</button>
         </div>
