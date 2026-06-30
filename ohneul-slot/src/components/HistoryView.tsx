@@ -1,11 +1,16 @@
-import type { HistoryEntry } from '../core/types';
+import type { HistoryEntry, Menu } from '../core/types';
 import { MENUS } from '../data/menus';
 import { weekEntries } from '../core/history-util';
 import { MenuIcon } from './MenuIcon';
 
 const DOW = ['월','화','수','목','금','토','일'];
 
-function findMenu(id: string) { return MENUS.find(m => m.id === id); }
+function entryMenu(e: HistoryEntry): Menu | undefined {
+  const found = MENUS.find(m => m.id === e.menuId);
+  if (found) return found;
+  if (e.name) return { id: e.menuId, name: e.name, emoji: e.emoji ?? '🍽️', category: e.category };
+  return undefined;
+}
 
 export function HistoryView({ history, today, onClose }:
   { history: HistoryEntry[]; today: string; onClose: () => void }) {
@@ -22,7 +27,7 @@ export function HistoryView({ history, today, onClose }:
         {DOW.map((label, i) => {
           const dt = new Date(monday + i * 86400000).toISOString().slice(0, 10);
           const e = byDate.get(dt);
-          const menu = e ? findMenu(e.menuId) : undefined;
+          const menu = e ? entryMenu(e) : undefined;
           return (
             <li key={dt} className={dt === today ? 'today' : ''}>
               <span className="dow">{label}</span>
