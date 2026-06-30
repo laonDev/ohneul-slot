@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import type { CustomSet } from '../core/types';
 
 interface Props {
@@ -12,6 +12,7 @@ interface Props {
 export function SetChips({ sets, selectedSetId, onSelect, onEdit, onCreate }: Props) {
   const timer = useRef<number | null>(null);
   const longFired = useRef(false);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
 
   const start = (s: CustomSet) => {
     longFired.current = false;

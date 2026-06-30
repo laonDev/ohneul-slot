@@ -53,9 +53,10 @@ export function SetEditor({ initial, onSubmit, onDelete, onClose }: Props) {
         })}
       </div>
 
-      {adding
-        ? <MenuSearch onAdd={addItem} />
-        : <button type="button" className="add-item" onClick={() => setAdding(true)}>+ 항목 추가</button>}
+      <button type="button" className="add-item" onClick={() => setAdding(a => !a)}>
+        {adding ? '닫기' : '+ 항목 추가'}
+      </button>
+      {adding && <MenuSearch onAdd={addItem} />}
 
       <button type="button" className="set-save" disabled={!canSave} onClick={() => { onSubmit(finalName, items, initial?.id); onClose(); }}>
         저장{canSave ? '' : ' (메뉴 2개 이상)'}
