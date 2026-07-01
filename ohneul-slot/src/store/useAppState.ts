@@ -1,10 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import { getJSON, setJSON } from '../platform/storage';
-import type { HistoryEntry, Settings } from '../core/types';
+import { newId } from '../core/customSet';
+import type { HistoryEntry, Settings, CustomSet, Menu } from '../core/types';
 
 const K_HISTORY = 'ohneul:history';
 const K_FAV = 'ohneul:favorites';
 const K_SETTINGS = 'ohneul:settings';
+const K_SETS = 'ohneul:customsets';
 
 const DEFAULT_SETTINGS: Settings = {
   pushEnabled: false, pushTime: '11:30', lastCategory: 'all', soundEnabled: true,
@@ -14,30 +16,29 @@ export function useAppState() {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+  const [customSets, setCustomSets] = useState<CustomSet[]>([]);
   const [loaded, setLoaded] = useState(false);
 
-  // 최초 로드
   useEffect(() => {
     let active = true;
     (async () => {
-      const [h, f, s] = await Promise.all([
+      const [h, f, s, c] = await Promise.all([
         getJSON<HistoryEntry[]>(K_HISTORY, []),
         getJSON<string[]>(K_FAV, []),
         getJSON<Settings>(K_SETTINGS, DEFAULT_SETTINGS),
+        getJSON<CustomSet[]>(K_SETS, []),
       ]);
       if (!active) return;
-      setHistory(h);
-      setFavorites(f);
-      setSettings(s);
+      setHistory(h); setFavorites(f); setSettings(s); setCustomSets(c);
       setLoaded(true);
     })();
     return () => { active = false; };
   }, []);
 
-  // 변경 시 영속화 (로드 완료 후에만 — 초기 기본값으로 덮어쓰기 방지)
   useEffect(() => { if (loaded) void setJSON(K_HISTORY, history); }, [history, loaded]);
   useEffect(() => { if (loaded) void setJSON(K_FAV, favorites); }, [favorites, loaded]);
   useEffect(() => { if (loaded) void setJSON(K_SETTINGS, settings); }, [settings, loaded]);
+  useEffect(() => { if (loaded) void setJSON(K_SETS, customSets); }, [customSets, loaded]);
 
   const addHistory = useCallback((entry: HistoryEntry) => {
     setHistory(prev => [...prev, entry]);
@@ -53,5 +54,22 @@ export function useAppState() {
     setSettings(prev => ({ ...prev, ...patch }));
   }, []);
 
-  return { loaded, history, favorites, settings, addHistory, toggleFavorite, updateSettings };
+  const addSet = useCallback((name: string, items: Menu[]): string => {
+    const id = newId('set');
+    setCustomSets(prev => [...prev, { id, name, items }]);
+    return id;
+  }, []);
+
+  const updateSet = useCallback((set: CustomSet) => {
+    setCustomSets(prev => prev.map(s => (s.id === set.id ? set : s)));
+  }, []);
+
+  const deleteSet = useCallback((id: string) => {
+    setCustomSets(prev => prev.filter(s => s.id !== id));
+  }, []);
+
+  return {
+    loaded, history, favorites, settings, customSets,
+    addHistory, toggleFavorite, updateSettings, addSet, updateSet, deleteSet,
+  };
 }
